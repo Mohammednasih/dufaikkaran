@@ -2,13 +2,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const video = document.getElementById('curtainVideo');
     const playOverlay = document.getElementById('playOverlay');
     const textOverlay = document.getElementById('textOverlay');
-    const music = document.getElementById('bgMusic');
-
-   
-
-    if (music) {
-        music.volume = 0.3;
-    }
 
     playOverlay.addEventListener('click', async () => {
         const poster = document.getElementById('videoPoster');
@@ -31,10 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
             await video.play();
         } catch (error) {
             console.error(error);
-        }
-
-        if (music) {
-            startMusic();
         }
     });
 
@@ -323,52 +312,6 @@ function setupCountdown() {
 
 
 
-const yesBtn = document.getElementById('yesBtn');
-const noBtn = document.getElementById('noBtn');
-const message = document.getElementById('rsvpMessage');
-
-if (yesBtn && noBtn) {
-
-    yesBtn.addEventListener('click', (e) => {
-        message.innerText = "Yay! Can't wait to celebrate with you 🎉";
-        message.style.opacity = '1';
-
-        yesBtn.classList.add('happy');
-        setTimeout(() => yesBtn.classList.remove('happy'), 600);
-
-        let originY = 0.8;
-        let originX = 0.5;
-        if (e.target) {
-            const rect = e.target.getBoundingClientRect();
-            originY = (rect.top + rect.height / 2) / window.innerHeight;
-            originX = (rect.left + rect.width / 2) / window.innerWidth;
-        }
-
-        if (typeof confetti === 'function') {
-            confetti({
-                particleCount: 120,
-                spread: 90,
-                origin: { x: originX, y: originY },
-                colors: ['#610B14', '#610B14', '#F7F0E3', '#A68B5B'],
-                shapes: ['circle', 'square'],
-                scalar: 1.1,
-                zIndex: 9999,
-                drift: 0,
-                ticks: 200
-            });
-        }
-    });
-
-    noBtn.addEventListener('click', () => {
-        message.innerText = "We’ll miss you... but you’ll be in our hearts ❤️ ";
-        message.style.opacity = '1';
-
-        noBtn.classList.add('sad');
-        setTimeout(() => noBtn.classList.remove('sad'), 500);
-    });
-}
-
-
 // ❤️ HEART TRAIL EFFECT
 document.addEventListener('touchstart', createHeart);
 document.addEventListener('mousemove', createHeart);
@@ -396,84 +339,4 @@ function createHeart(e) {
     setTimeout(() => {
         heart.remove();
     }, 1000);
-}
-
-
-const music = document.getElementById('bgMusic');
-const musicToggle = document.getElementById('musicToggle');
-const musicIcon = document.getElementById('musicIcon');
-
-let isPlaying = false;
-let shouldResumeAfterFocus = false;
-
-function setMusicButtonIcon(playing) {
-    if (musicIcon) {
-        musicIcon.setAttribute('icon', playing ? 'lucide:volume-2' : 'lucide:volume-x');
-    }
-}
-
-function startMusic() {
-    if (!music) return;
-
-    if (!music.paused) {
-        isPlaying = true;
-        setMusicButtonIcon(true);
-        return;
-    }
-
-    music.play().then(() => {
-        isPlaying = true;
-        setMusicButtonIcon(true);
-    }).catch(() => {
-        isPlaying = false;
-        setMusicButtonIcon(false);
-    });
-    
-}
-
-function pauseMusic() {
-    if (!music || music.paused) return;
-
-    music.pause();
-    isPlaying = false;
-}
-
-function handleVisibilityChange() {
-    if (document.hidden) {
-        if (music && !music.paused && isPlaying) {
-            pauseMusic();
-            shouldResumeAfterFocus = true;
-        }
-    } else if (shouldResumeAfterFocus) {
-        shouldResumeAfterFocus = false;
-        startMusic();
-    }
-}
-
-// toggle button
-if (music && musicToggle && musicIcon) {
-    musicToggle.addEventListener('click', () => {
-        if (isPlaying) {
-            pauseMusic();
-            setMusicButtonIcon(false);
-        } else {
-            startMusic();
-        }
-    });
-
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    window.addEventListener('blur', () => {
-        if (music && !music.paused && isPlaying) {
-            pauseMusic();
-            shouldResumeAfterFocus = true;
-        }
-    });
-
-    window.addEventListener('focus', () => {
-        if (!document.hidden && shouldResumeAfterFocus) {
-            shouldResumeAfterFocus = false;
-            startMusic();
-        }
-    });
 }
